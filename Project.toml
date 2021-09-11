@@ -1,0 +1,17 @@
+name = "FermionicOperatorStringAnalyzer"
+uuid = "7a052949-c101-4ca3-9a7e-43a2532b2fa8"
+authors = ["Qi Yang <qiyang@mail.ustc.edu.cn> and contributors"]
+version = "0.1.0"
+
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+Metatheory = "e9d8d322-4543-424a-9be4-0cc815abe26c"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
