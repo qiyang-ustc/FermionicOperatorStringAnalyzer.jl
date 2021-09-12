@@ -7,10 +7,10 @@ end
 
 @testset "PFO Constructor" begin 
     fo = FO(:c,2,Up,false)
-    pfo = PFO(fo,:n1)
+    pfo = PFO(fo,symbols(:n1))
     @test isa(pfo,PFO)
     fo = FO(:d,-2,Sl,true)
-    pfo = PFO(fo,:n3)
+    pfo = PFO(fo,symbols(:n3))
     @test isa(pfo,PFO)
 end
 

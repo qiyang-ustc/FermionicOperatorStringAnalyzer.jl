@@ -1,3 +1,4 @@
+using SymEngine
 export FO,PFO,dag
 export Up,Dn,Sl
 
@@ -43,7 +44,7 @@ struct PFO
 """
 struct PFO <: AbstractFO
     fo::FO
-    pow::Symbol
+    pow::Basic
 end
 
 export dag

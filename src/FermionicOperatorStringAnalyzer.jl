@@ -1,4 +1,6 @@
 module FermionicOperatorStringAnalyzer
+    using Reexport
+    @reexport using SymEngine
 
 
     include("FO.jl")
