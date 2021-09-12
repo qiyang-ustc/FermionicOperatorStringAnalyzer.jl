@@ -35,6 +35,7 @@ function simplify(fos::AbstractFOS,bra::AbstractBra,ket::AbstractKet)
     tol = 100
     for i = 2:2:tol
         expr = replace(expr,"+ $i*"=>"+ 0*")
+        expr = replace(expr,"+ $(i+1)*"=>"+ 1*")
     end
     expr = RExpr(expr)
     # ---- Foolish part ends
