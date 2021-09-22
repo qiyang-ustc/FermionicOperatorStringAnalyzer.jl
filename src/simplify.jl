@@ -19,7 +19,7 @@ function simplify(fos::AbstractFOS,bra::AbstractBra,ket::AbstractKet)
             extract_redundant!(fos,redundant)
         end
     end
-    
+
     for (pow1,pow2) in delta
         coef = subs(coef, pow2=>pow1)
     end

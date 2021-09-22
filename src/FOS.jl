@@ -16,3 +16,15 @@ getindex(fos::FOS,key...) = getindex(fos.fos,key...)
 setindex!(fos::FOS,value,key...) = setindex!(fos.fos,value,key...)
 length(fos::FOS) = length(fos.fos)
 
+import Base.display
+export display
+function display(fos::FOS)
+    fos = fos.fos
+    s = ""
+    for i=1:length(fos)
+        fo = fos[i].fo
+        dag = fo.dag ? "^{\\dagger}" : ""
+        s=s*"($(fo.symbol)_{$(fo.site)}^{$(fos[i].pow)})"*dag*" "
+    end
+    display(s)
+end

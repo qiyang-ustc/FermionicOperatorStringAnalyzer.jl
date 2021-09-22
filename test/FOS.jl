@@ -4,5 +4,3 @@
     fos = FOS([fo1;fo2])
     @test isa(fos,FOS)
 end
-
-
