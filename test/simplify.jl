@@ -117,22 +117,22 @@ using Reduce
             for iy = 1:Ly
                 if dir == "r"
                     ox,oy = (ix%Lx)+1,iy
-                    si,so = iy+Ly*(ix-1),oy+Ly*(ox-1)
-                    push!(fos.fos,PFO(FO(Meta.parse("r"),si,Sl,false),symbols(Meta.parse("b$(si)$(so)"))))
+                    si,so = ix+Ly*(iy-1),ox+Lx*(oy-1)
                     push!(fos.fos,PFO(FO(Meta.parse("l"),so,Sl,false),symbols(Meta.parse("b$(si)$(so)"))))
+                    push!(fos.fos,PFO(FO(Meta.parse("r"),si,Sl,false),symbols(Meta.parse("b$(si)$(so)"))))
                 else
                     ox,oy = ix,(iy%Ly)+1
-                    si,so = iy+Ly*(ix-1),oy+Ly*(ox-1)
-                    push!(fos.fos,PFO(FO(Meta.parse("u"),so,Sl,false),symbols(Meta.parse("b$(si)$(so)"))))
+                    si,so = ix+Ly*(iy-1),ox+Lx*(oy-1)
                     push!(fos.fos,PFO(FO(Meta.parse("d"),si,Sl,false),symbols(Meta.parse("b$(si)$(so)"))))
+                    push!(fos.fos,PFO(FO(Meta.parse("u"),so,Sl,false),symbols(Meta.parse("b$(si)$(so)"))))
                 end
             end
         end 
     end
 
-    for ix = 1:1:Lx
-        for iy = 1:1:Ly
-            site = iy+Ly*(ix-1)
+    for iy = 1:1:Ly
+        for ix = 1:1:Lx
+            site = ix+Lx*(iy-1)
             for dir in ["l";"u";"r";"d"]
                 push!(fos.fos,PFO(FO(Meta.parse("$(dir)"),site,Sl,true),symbols(Meta.parse("$(dir)$(site)"))))
             end
@@ -157,6 +157,77 @@ using Reduce
     print("\n")
 end
 
+@testset "Steps 1 by steps contraction for Lx,Ly =2,2; Nv=1 PBC" begin
+    Lx,Ly = 2,2
+    fos = FOS()
+
+    push!(fos.fos,PFO(FO(Meta.parse("l"),2,Sl,false),:b12))
+    push!(fos.fos,PFO(FO(Meta.parse("r"),1,Sl,false),:b12))
+
+    push!(fos.fos,PFO(FO(Meta.parse("l"),1,Sl,false),:b21))
+    push!(fos.fos,PFO(FO(Meta.parse("r"),2,Sl,false),:b21))
+
+    for site in [1;2]
+        for dir in ["l";"u";"r";"d"]
+            push!(fos.fos,PFO(FO(Meta.parse("$(dir)"),site,Sl,true),symbols(Meta.parse("$(dir)$(site)"))))
+        end
+        push!(fos.fos,PFO(FO(:σ,site,Sl,true),symbols(Meta.parse("S$(site)"))))
+    end
+    bra = FOBra([[FO(Meta.parse("$(s)"),i,Sl,true) for i =1:Lx*Ly for s in ["l";"r"]]...])
+    ket = FOKet([[FO(Meta.parse("$(s)"),i,Sl,false) for i =1:Lx*Ly for s in ["l";"r"]]...])
+
+    display(fos)
+    (expr,redundant,delta) = simplify(fos,bra,ket)
+    display(Reduce.Algebra.factor(expr))
+    print("\n")
+    display(redundant)
+    print("\n")
+    display(delta)
+    print("\n")
+end
+
+
+@testset "Steps 2 by steps contraction for Lx,Ly =2,2; Nv=1 PBC" begin
+    Lx,Ly = 2,2
+    fos = FOS()
+
+    push!(fos.fos,PFO(FO(Meta.parse("d"),1,Sl,false),:b13))
+    push!(fos.fos,PFO(FO(Meta.parse("u"),3,Sl,false),:b13))
+    push!(fos.fos,PFO(FO(Meta.parse("d"),3,Sl,false),:b31))
+    push!(fos.fos,PFO(FO(Meta.parse("u"),1,Sl,false),:b31))
+
+    push!(fos.fos,PFO(FO(Meta.parse("d"),2,Sl,false),:b24))
+    push!(fos.fos,PFO(FO(Meta.parse("u"),4,Sl,false),:b24))
+    push!(fos.fos,PFO(FO(Meta.parse("d"),4,Sl,false),:b42))
+    push!(fos.fos,PFO(FO(Meta.parse("u"),2,Sl,false),:b42))
+    
+    push!(fos.fos,PFO(FO(:u,1,Sl,true),:u1))
+    push!(fos.fos,PFO(FO(:d,1,Sl,true),:d1))
+    push!(fos.fos,PFO(FO(:σ,1,Sl,true),:s1))
+    push!(fos.fos,PFO(FO(:u,2,Sl,true),:u2))
+    push!(fos.fos,PFO(FO(:d,2,Sl,true),:d2))
+    push!(fos.fos,PFO(FO(:σ,2,Sl,true),:s2))
+
+    push!(fos.fos,PFO(FO(:u,3,Sl,true),:u3))
+    push!(fos.fos,PFO(FO(:d,3,Sl,true),:d3))
+    push!(fos.fos,PFO(FO(:σ,3,Sl,true),:s3))
+    push!(fos.fos,PFO(FO(:u,4,Sl,true),:u4))
+    push!(fos.fos,PFO(FO(:d,4,Sl,true),:d4))
+    push!(fos.fos,PFO(FO(:σ,4,Sl,true),:s4))
+
+
+    bra = FOBra([[FO(Meta.parse("$(s)"),i,Sl,true) for i =1:Lx*Ly for s in ["l";"r";"d";"u"]]...])
+    ket = FOKet([[FO(Meta.parse("$(s)"),i,Sl,false) for i =1:Lx*Ly for s in ["l";"r";"d";"u"]]...])
+
+    display(fos)
+    (expr,redundant,delta) = simplify(fos,bra,ket)
+    display(Reduce.Algebra.factor(expr))
+    print("\n")
+    display(redundant)
+    print("\n")
+    display(delta)
+    print("\n")
+end
 
 
 # @testset  "simplify 2D Lx,Ly = 2,2; Spinless; Nv = 1; OBC" begin

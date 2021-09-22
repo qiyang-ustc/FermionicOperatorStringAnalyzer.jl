@@ -32,6 +32,29 @@ function simplify(fos::AbstractFOS,bra::AbstractBra,ket::AbstractKet)
     expr = SymEngine.toString(coef)
 
     # This is a foolish implementation, the aim is eliminating even term in expr
+
+# Such is an option (guildline?) to develop this foolish implementation
+# =================================
+#   using Metatheory
+#   using Metatheory.Library
+#   using Metatheory.EGraphs
+
+#   my_t = @theory begin
+#       x * x => x
+#       ex + ex => 0
+#   end
+#   t_add = commutative_group(:+, 0, :-)
+#   t_mul = commutative_monoid(:*, 1)
+#   t = my_t ∪ t_add ∪ t_mul
+
+#   ex = :(b1*b1+b1*b2+b1*b2+b1*i1+b1*s1+b1*j1+b1*b2+b1*b2+b1*i1+b1*s1+b2*b2+b2*s1+b2*s2)
+
+#   g = EGraph(ex)
+#   saturate!(g, t)
+#   ex = extract!(g, astsize)
+#   # :(s2 * b2 + (s1 * b2 + (b2 + (b1 + j1 * b1))))
+# =================================
+
     tol = 100
     for i = 2:2:tol
         expr = replace(expr,"+ $i*"=>"+ 0*")
